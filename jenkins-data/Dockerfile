@@ -7,7 +7,7 @@ RUN addgroup -g 1000 jenkins \
 RUN mkdir -p /var/log/jenkins
 RUN chown -R jenkins:jenkins /var/log/jenkins
 
-VOLUME /var/log/jenkins
+VOLUME /var/log/jenkins /var/jenkins_home
 
 USER jenkins
 
