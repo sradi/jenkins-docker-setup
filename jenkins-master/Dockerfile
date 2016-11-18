@@ -13,8 +13,20 @@ ENV JENKINS_PLUGINS git docker-plugin workflow-aggregator docker-workflow matrix
 RUN /usr/local/bin/install-plugins.sh ${JENKINS_PLUGINS}
 
 USER root
-RUN mkdir /var/log/jenkins
-RUN mkdir /var/cache/jenkins
-RUN chown -R  jenkins:jenkins /var/log/jenkins
-RUN chown -R  jenkins:jenkins /var/cache/jenkins
+RUN mkdir /var/log/jenkins \
+    && mkdir /var/cache/jenkins \
+    && mkdir -p /var/keys/jenkins/.ssh \
+    && chown -R  jenkins:jenkins /var/log/jenkins \
+    && chown -R  jenkins:jenkins /var/cache/jenkins \
+    && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
+
+# Copy in the Docker certs, we'll use /usr/local/etc for them
+COPY certs-from-docker-host/* /usr/local/etc/jenkins/certs/
+RUN chmod +r /usr/local/etc/jenkins/certs/ca.pem \
+    && chmod +r /usr/local/etc/jenkins/certs/cert.pem \
+    && chown -R jenkins:jenkins /usr/local/etc/jenkins
+
 USER jenkins
+
+# generate key pair for connections to buildagents
+RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa

@@ -11,3 +11,8 @@ Experiments on how to automate Jenkins setup with docker, including Docker-based
 * a default user 'admin' (password 'admin') is generated. Values can be changed through environment variables
 * some plugins are pre-installed. List of plugins can be customized thour environment variable.
   * This uses `/usr/local/bin/install-plugins.sh` instead of deprecated `/usr/local/bin/plugins.sh`, as the new script supports transitive plugin dependencies!
+* jenkins-master contains cert-files from (my local) docker host (portability issue!!!). Is there another way to get the docker plugin working?
+
+## Current manual steps in Jenkins
+* Credentials -> Add "Docker Certificates Directory" pointing to the cert files of the docker host (/usr/local/etc/jenkins/certs/)
+* Configure System -> Cloud -> Docker
