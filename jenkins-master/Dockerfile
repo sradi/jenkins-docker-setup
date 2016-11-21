@@ -7,7 +7,6 @@ ENV JAVA_OPTS -Xmx2g -Djenkins.install.runSetupWizard=false
 ENV JENKINS_OPTS --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war
 
 COPY init.groovy.d/* /usr/share/jenkins/ref/init.groovy.d/
-#COPY custom.groovy /usr/share/jenkins/ref/init.groovy.d/custom.groovy
 
 ENV JENKINS_PLUGINS git docker-plugin workflow-aggregator docker-workflow matrix-auth blueocean
 RUN /usr/local/bin/install-plugins.sh ${JENKINS_PLUGINS}
@@ -20,7 +19,7 @@ RUN mkdir /var/log/jenkins \
     && chown -R  jenkins:jenkins /var/cache/jenkins \
     && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
 
-# Copy in the Docker certs, we'll use /usr/local/etc for them
+# Copy in the certs for connection to Docker host
 COPY certs-from-docker-host/* /usr/local/etc/jenkins/certs/
 RUN chmod +r /usr/local/etc/jenkins/certs/ca.pem \
     && chmod +r /usr/local/etc/jenkins/certs/cert.pem \
