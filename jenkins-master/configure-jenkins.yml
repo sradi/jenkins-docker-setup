@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Copy Jenkins templates
+    template: src=config-templates/credentials.xml.j2 dest=/var/jenkins_home/credentials.xml
+

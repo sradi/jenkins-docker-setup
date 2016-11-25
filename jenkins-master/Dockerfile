@@ -19,6 +19,36 @@ RUN mkdir /var/log/jenkins \
     && chown -R  jenkins:jenkins /var/cache/jenkins \
     && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
 
+COPY config-templates/*.j2 /usr/share/jenkins/ref/config-templates/
+COPY configure-jenkins.yml /usr/share/jenkins/ref/
+RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
+    apk --update add sudo                                         && \
+    \
+    \
+    echo "===> Adding Python runtime..."  && \
+    apk --update add python py-pip openssl ca-certificates    && \
+    apk --update add --virtual build-dependencies \
+                python-dev libffi-dev openssl-dev build-base  && \
+    pip install --upgrade pip cffi                            && \
+    \
+    \
+    echo "===> Installing Ansible..."  && \
+    pip install ansible                && \
+    \
+    \
+    echo "===> Configuring Jenkins..." && \
+    ansible-playbook /usr/share/jenkins/ref/configure-jenkins.yml && \
+    \
+    \
+    echo "===> Removing package list..."  && \
+    apk del build-dependencies            && \
+    rm -rf /var/cache/apk/*               && \
+    \
+    \
+    echo "===> Adding hosts for convenience..."  && \
+    mkdir -p /etc/ansible                        && \
+    echo 'localhost' > /etc/ansible/hosts
+
 # Copy in the certs for connection to Docker host
 COPY certs-from-docker-host/* /usr/local/etc/jenkins/certs/
 RUN chmod +r /usr/local/etc/jenkins/certs/ca.pem \
