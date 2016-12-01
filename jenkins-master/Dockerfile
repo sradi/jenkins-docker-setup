@@ -19,21 +19,24 @@ RUN mkdir /var/log/jenkins \
     && chown -R  jenkins:jenkins /var/cache/jenkins \
     && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
 
-COPY config-templates/*.j2 /usr/share/jenkins/ref/config-templates/
+COPY config-templates/* /usr/share/jenkins/ref/config-templates/
 COPY configure-jenkins.yml /usr/share/jenkins/ref/
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
     \
     echo "===> Adding Python runtime..."  && \
-    apk --update add python py-pip openssl ca-certificates    && \
-    apk --update add --virtual build-dependencies \
+    apk add python py-pip openssl ca-certificates    && \
+    apk add libxml2 libxslt py-lxml && \
+    apk add --virtual build-dependencies \
                 python-dev libffi-dev openssl-dev build-base  && \
     pip install --upgrade pip cffi                            && \
     \
     \
-    echo "===> Installing Ansible..."  && \
+    echo "===> Installing Ansible + modules..."  && \
     pip install ansible                && \
+    ansible-galaxy install -p /tmp cmprescott.xml && \
+    ln -s /tmp/cmprescott.xml/library /usr/share/jenkins/ref/library && \
     \
     \
     echo "===> Configuring Jenkins..." && \
