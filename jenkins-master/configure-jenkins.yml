@@ -1,25 +1,17 @@
 ---
 - hosts: 127.0.0.1
   connection: local
-  vars:
-    foo: "Fooooo"
-    bar: "Baaaar"
   
   tasks:
-  - name: Copy Jenkins templates
-    template: src=config-templates/credentials.xml.j2 dest=/var/jenkins_home/credentials.xml
-
-#  - name: modify xml
-#    xml:
-#      file: /config.xml
-#      xpath: /hudson
-#      ensure: present
-#      attribute: foo
-#      value: bar
-
-  - name: add child element
+  - include_vars: credentials.yml
+  - name: add credentials to Jenkins configuration
     xml:
-      file: config-templates/config.xml
-      xpath: /hudson/clouds
-      add_children:
-        - docker: test
+      file: config-templates/credentials.xml
+      xpath: /com.cloudbees.plugins.credentials.SystemCredentialsProvider/domainCredentialsMap/entry
+      input_type: xml
+      add_children: "{{ credentials }}"
+
+  - name: Pretty print without modification
+    xml:
+      file: config-templates/credentials.xml
+      pretty_print: True

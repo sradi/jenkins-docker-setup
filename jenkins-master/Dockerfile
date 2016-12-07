@@ -20,7 +20,7 @@ RUN mkdir /var/log/jenkins \
     && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
 
 COPY config-templates/* /usr/share/jenkins/ref/config-templates/
-COPY configure-jenkins.yml /usr/share/jenkins/ref/
+COPY *.yml /usr/share/jenkins/ref/
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
@@ -39,18 +39,18 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     ln -s /tmp/cmprescott.xml/library /usr/share/jenkins/ref/library && \
     \
     \
+    echo "===> Adding hosts for convenience..."  && \
+    mkdir -p /etc/ansible                        && \
+    echo 'localhost' > /etc/ansible/hosts        && \
+    \
+    \
     echo "===> Configuring Jenkins..." && \
     ansible-playbook /usr/share/jenkins/ref/configure-jenkins.yml && \
     \
     \
     echo "===> Removing package list..."  && \
     apk del build-dependencies            && \
-    rm -rf /var/cache/apk/*               && \
-    \
-    \
-    echo "===> Adding hosts for convenience..."  && \
-    mkdir -p /etc/ansible                        && \
-    echo 'localhost' > /etc/ansible/hosts
+    rm -rf /var/cache/apk/*
 
 # Copy in the certs for connection to Docker host
 COPY certs-from-docker-host/* /usr/local/etc/jenkins/certs/
