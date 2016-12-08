@@ -15,12 +15,14 @@ USER root
 RUN mkdir /var/log/jenkins \
     && mkdir /var/cache/jenkins \
     && mkdir -p /var/keys/jenkins/.ssh \
-    && chown -R  jenkins:jenkins /var/log/jenkins \
-    && chown -R  jenkins:jenkins /var/cache/jenkins \
-    && chown -R  jenkins:jenkins /var/keys/jenkins/.ssh
+    && mkdir /usr/share/jenkins-provisioning \
+    && chown -R jenkins:jenkins /var/log/jenkins \
+    && chown -R jenkins:jenkins /var/cache/jenkins \
+    && chown -R jenkins:jenkins /var/keys/jenkins/.ssh \
+    && chown -R jenkins:jenkins /usr/share/jenkins-provisioning
 
-COPY config-templates/* /usr/share/jenkins/ref/config-templates/
-COPY *.yml /usr/share/jenkins/ref/
+COPY config-templates/* /usr/share/jenkins-provisioning/config-templates/
+COPY *.yml /usr/share/jenkins-provisioning/
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
@@ -36,7 +38,7 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     echo "===> Installing Ansible + modules..."  && \
     pip install ansible                && \
     ansible-galaxy install -p /tmp cmprescott.xml && \
-    ln -s /tmp/cmprescott.xml/library /usr/share/jenkins/ref/library && \
+    ln -s /tmp/cmprescott.xml/library /usr/share/jenkins-provisioning/library && \
     \
     \
     echo "===> Adding hosts for convenience..."  && \
@@ -45,7 +47,7 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     \
     echo "===> Configuring Jenkins..." && \
-    ansible-playbook /usr/share/jenkins/ref/configure-jenkins.yml && \
+    ansible-playbook /usr/share/jenkins-provisioning/configure-jenkins.yml && \
     \
     \
     echo "===> Removing package list..."  && \
