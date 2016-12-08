@@ -6,12 +6,12 @@
   - include_vars: credentials.yml
   - name: add credentials to Jenkins configuration
     xml:
-      file: /var/jenkins_home/credentials.xml
+      file: /usr/share/jenkins/ref/credentials.xml
       xpath: /com.cloudbees.plugins.credentials.SystemCredentialsProvider/domainCredentialsMap/entry
       input_type: xml
       add_children: "{{ credentials }}"
 
   - name: Pretty print without modification
     xml:
-      file: /var/jenkins_home/credentials.xml
+      file: /usr/share/jenkins/ref/credentials.xml
       pretty_print: True

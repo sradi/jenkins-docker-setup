@@ -21,7 +21,7 @@ RUN mkdir /var/log/jenkins \
     && chown -R jenkins:jenkins /var/keys/jenkins/.ssh \
     && chown -R jenkins:jenkins /usr/share/jenkins-provisioning
 
-COPY config-templates/* /usr/share/jenkins-provisioning/config-templates/
+COPY config-templates/* /usr/share/jenkins/ref/
 COPY *.yml /usr/share/jenkins-provisioning/
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
