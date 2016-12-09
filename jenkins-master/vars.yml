@@ -23,10 +23,9 @@ docker_cloud_element_name: com.nirima.jenkins.plugins.docker.DockerCloud
 
 docker_cloud_configuration:
   - name: local-machbook-dockerhost
-  - templates: "" #class="empty-list"
   - serverUrl: "tcp://192.168.99.100:2376"
-  - connectTimeout: 5
-  - readTimeout: 15
+  - connectTimeout: "5"
+  - readTimeout: "15"
   - version: ""
   - credentialsId: e650d4f8-a5f1-4d61-ae52-6da893f55073
-  - containerCap: 10
+  - containerCap: "10"
