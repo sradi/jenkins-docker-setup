@@ -26,6 +26,7 @@ RUN mkdir /var/log/jenkins \
 
 COPY config-templates/* /usr/share/jenkins/ref/
 COPY *.yml /usr/share/jenkins-provisioning/
+
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
@@ -46,16 +47,19 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     echo "===> Adding hosts for convenience..."  && \
     mkdir -p /etc/ansible                        && \
-    echo 'localhost' > /etc/ansible/hosts        && \
-    \
-    \
-    echo "===> Configuring Jenkins..." && \
-    ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
-    \
-    \
-    echo "===> Removing package list..."  && \
-    apk del build-dependencies            && \
-    rm -rf /var/cache/apk/*
+    echo 'localhost' > /etc/ansible/hosts
+
+ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
+ONBUILD COPY *.yml /usr/share/jenkins-provisioning/
+
+# TODO: auszuführende(s) Playbook(s) parametrisierbar machen
+ONBUILD RUN echo "===> Configuring Jenkins..." && \
+            ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
+            \
+            \
+            echo "===> Removing package list..."  && \
+            apk del build-dependencies            && \
+            rm -rf /var/cache/apk/*
 
 USER jenkins
 
