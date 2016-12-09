@@ -10,3 +10,5 @@ RUN chmod +r ${DOCKER_HOST_CERTS_PATH}ca.pem \
     && chmod +r ${DOCKER_HOST_CERTS_PATH}cert.pem
 
 RUN /usr/local/bin/install-plugins.sh blueocean
+
+COPY config-templates/* /usr/share/jenkins/ref/
