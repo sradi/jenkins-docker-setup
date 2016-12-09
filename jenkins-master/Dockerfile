@@ -11,7 +11,7 @@ ENV JENKINS_OPTS --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jen
 
 COPY init.groovy.d/* /usr/share/jenkins/ref/init.groovy.d/
 
-ENV JENKINS_PLUGINS git docker-plugin workflow-aggregator docker-workflow matrix-auth blueocean
+ENV JENKINS_PLUGINS git docker-plugin workflow-aggregator docker-workflow matrix-auth
 RUN /usr/local/bin/install-plugins.sh ${JENKINS_PLUGINS}
 
 USER root
