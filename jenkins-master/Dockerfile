@@ -1,6 +1,9 @@
 FROM jenkins:alpine
 MAINTAINER Stefan Rademacher <s.rademacher@live.de>
 
+ENV DOCKER_HOST_CERTS_PATH /usr/local/etc/jenkins/certs/
+RUN chown -R jenkins:jenkins /usr/local/etc/jenkins
+
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
 ENV JAVA_OPTS -Xmx2g -Djenkins.install.runSetupWizard=false
@@ -54,13 +57,9 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk del build-dependencies            && \
     rm -rf /var/cache/apk/*
 
-# Copy in the certs for connection to Docker host
-COPY certs-from-docker-host/* /usr/local/etc/jenkins/certs/
-RUN chmod +r /usr/local/etc/jenkins/certs/ca.pem \
-    && chmod +r /usr/local/etc/jenkins/certs/cert.pem \
-    && chown -R jenkins:jenkins /usr/local/etc/jenkins
-
 USER jenkins
 
 # generate key pair for connections to buildagents
 RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
+
+CMD ["java", "-jar", "/usr/share/jenkins/jenkins.war", "--version"]
