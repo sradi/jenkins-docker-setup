@@ -3,15 +3,32 @@
   connection: local
   
   tasks:
-  - include_vars: credentials.yml
+  - include_vars: vars.yml
   - name: add credentials to Jenkins configuration
     xml:
       file: /usr/share/jenkins/ref/credentials.xml
       xpath: /com.cloudbees.plugins.credentials.SystemCredentialsProvider/domainCredentialsMap/entry
       input_type: xml
       add_children: "{{ credentials }}"
+ 
+  - name: add docker cloud element
+    xml:
+      file: /usr/share/jenkins/ref/config.xml
+      xpath: /clouds
+      add_children: "{{ docker_cloud_element_name }}"
+ 
+  - name: add docker cloud configuration
+    xml:
+      file: /usr/share/jenkins/ref/config.xml
+      xpath: /clouds/{{ docker_cloud_element_name }}
+      add_children: "{{ docker_cloud_configuration }}"
 
-  - name: Pretty print without modification
+  - name: Pretty print credentials.xml without modification
     xml:
       file: /usr/share/jenkins/ref/credentials.xml
+      pretty_print: True
+  
+  - name: Pretty print config.xml without modification
+    xml:
+      file: /usr/share/jenkins/ref/config.xml
       pretty_print: True
