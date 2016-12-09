@@ -50,7 +50,7 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     \
     echo "===> Configuring Jenkins..." && \
-    ansible-playbook /usr/share/jenkins-provisioning/configure-jenkins.yml && \
+    ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
     \
     \
     echo "===> Removing package list..."  && \
