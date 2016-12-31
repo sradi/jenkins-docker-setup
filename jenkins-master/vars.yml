@@ -19,13 +19,59 @@ credentials:
       </com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey>
     </java.util.concurrent.CopyOnWriteArrayList>
 
-docker_cloud_element_name: com.nirima.jenkins.plugins.docker.DockerCloud
-
 docker_cloud_configuration:
-  - name: local-machbook-dockerhost
-  - serverUrl: "tcp://192.168.99.100:2376"
-  - connectTimeout: "5"
-  - readTimeout: "15"
-  - version: ""
-  - credentialsId: e650d4f8-a5f1-4d61-ae52-6da893f55073
-  - containerCap: "10"
+  - <com.nirima.jenkins.plugins.docker.DockerCloud>
+      <name>local-machbook-dockerhost</name>
+      <templates>
+        <com.nirima.jenkins.plugins.docker.DockerTemplate>
+          <configVersion>2</configVersion>
+          <labelString>default-agent</labelString>
+          <launcher class="com.nirima.jenkins.plugins.docker.launcher.DockerComputerSSHLauncher">
+            <sshConnector>
+              <port>22</port>
+              <credentialsId>default-agent-key</credentialsId>
+              <jvmOptions></jvmOptions>
+              <javaPath></javaPath>
+              <maxNumRetries>0</maxNumRetries>
+              <retryWaitTime>0</retryWaitTime>
+            </sshConnector>
+          </launcher>
+          <remoteFsMapping>/Users/sradi/.jenkins</remoteFsMapping>
+          <remoteFs>/home/jenkins</remoteFs>
+          <instanceCap>5</instanceCap>
+          <mode>EXCLUSIVE</mode>
+          <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
+            <idleMinutes>10</idleMinutes>
+            <idleMinutes defined-in="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">10</idleMinutes>
+          </retentionStrategy>
+          <numExecutors>1</numExecutors>
+          <dockerTemplateBase>
+            <image>jenkinsci/docker-ssh-slave</image>
+            <dockerCommand></dockerCommand>
+            <lxcConfString></lxcConfString>
+            <hostname></hostname>
+            <dnsHosts/>
+            <network></network>
+            <volumes/>
+            <volumesFrom2/>
+            <environment/>
+            <bindPorts></bindPorts>
+            <bindAllPorts>false</bindAllPorts>
+            <privileged>false</privileged>
+            <tty>false</tty>
+            <extraHosts class="java.util.Collections$UnmodifiableRandomAccessList" resolves-to="java.util.Collections$UnmodifiableList">
+              <c class="list"/>
+              <list reference="../c"/>
+            </extraHosts>
+          </dockerTemplateBase>
+          <removeVolumes>false</removeVolumes>
+          <pullStrategy>PULL_LATEST</pullStrategy>
+        </com.nirima.jenkins.plugins.docker.DockerTemplate>
+      </templates>
+      <serverUrl>tcp://192.168.99.100:2376</serverUrl>
+      <connectTimeout>5</connectTimeout>
+      <readTimeout>15</readTimeout>
+      <version></version>
+      <credentialsId>e650d4f8-a5f1-4d61-ae52-6da893f55073</credentialsId>
+      <containerCap>10</containerCap>
+    </com.nirima.jenkins.plugins.docker.DockerCloud>
