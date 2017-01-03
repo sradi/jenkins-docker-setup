@@ -2,7 +2,6 @@ FROM jenkins:alpine
 MAINTAINER Stefan Rademacher <s.rademacher@live.de>
 
 ENV DOCKER_HOST_CERTS_PATH /usr/local/etc/jenkins/certs/
-RUN chown -R jenkins:jenkins /usr/local/etc/jenkins
 
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
@@ -16,13 +15,15 @@ RUN /usr/local/bin/install-plugins.sh ${JENKINS_PLUGINS}
 
 USER root
 RUN mkdir /var/log/jenkins \
-    && mkdir /var/cache/jenkins \
-    && mkdir -p /var/keys/jenkins/.ssh \
-    && mkdir /usr/share/jenkins-provisioning \
     && chown -R jenkins:jenkins /var/log/jenkins \
+    && mkdir /var/cache/jenkins \
     && chown -R jenkins:jenkins /var/cache/jenkins \
+    && mkdir -p /var/keys/jenkins/.ssh \
     && chown -R jenkins:jenkins /var/keys/jenkins/.ssh \
-    && chown -R jenkins:jenkins /usr/share/jenkins-provisioning
+    && mkdir /usr/share/jenkins-provisioning \
+    && chown -R jenkins:jenkins /usr/share/jenkins-provisioning \
+    && mkdir -p /usr/local/etc/jenkins \
+    && chown -R jenkins:jenkins /usr/local/etc/jenkins
 
 COPY config-templates/* /usr/share/jenkins/ref/
 COPY *.yml /usr/share/jenkins-provisioning/
