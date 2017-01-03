@@ -25,9 +25,6 @@ RUN mkdir /var/log/jenkins \
     && mkdir -p /usr/local/etc/jenkins \
     && chown -R jenkins:jenkins /usr/local/etc/jenkins
 
-COPY config-templates/* /usr/share/jenkins/ref/
-COPY *.yml /usr/share/jenkins-provisioning/
-
 RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
@@ -50,6 +47,10 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     mkdir -p /etc/ansible                        && \
     echo 'localhost' > /etc/ansible/hosts
 
+USER jenkins
+COPY config-templates/* /usr/share/jenkins/ref/
+COPY *.yml /usr/share/jenkins-provisioning/
+
 ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
 ONBUILD COPY *.yml /usr/share/jenkins-provisioning/
 
@@ -61,8 +62,6 @@ ONBUILD RUN echo "===> Configuring Jenkins..." && \
             echo "===> Removing package list..."  && \
             apk del build-dependencies            && \
             rm -rf /var/cache/apk/*
-
-USER jenkins
 
 # generate key pair for connections to buildagents
 RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
