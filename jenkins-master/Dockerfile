@@ -1,14 +1,17 @@
 FROM jenkins:alpine
 MAINTAINER Stefan Rademacher <s.rademacher@live.de>
 
-ENV DOCKER_HOST_CERTS_PATH /usr/local/etc/jenkins/certs/
+USER jenkins
 
+ENV DOCKER_HOST_CERTS_PATH /usr/local/etc/jenkins/certs/
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
 ENV JAVA_OPTS -Xmx2g -Djenkins.install.runSetupWizard=false
 ENV JENKINS_OPTS --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war
 
 COPY init.groovy.d/* /usr/share/jenkins/ref/init.groovy.d/
+COPY config-templates/* /usr/share/jenkins/ref/
+COPY *.yml /usr/share/jenkins-provisioning/
 
 ENV JENKINS_PLUGINS git docker-plugin workflow-aggregator docker-workflow matrix-auth
 RUN /usr/local/bin/install-plugins.sh ${JENKINS_PLUGINS}
@@ -20,12 +23,17 @@ RUN mkdir /var/log/jenkins \
     && chown -R jenkins:jenkins /var/cache/jenkins \
     && mkdir -p /var/keys/jenkins/.ssh \
     && chown -R jenkins:jenkins /var/keys/jenkins/.ssh \
-    && mkdir /usr/share/jenkins-provisioning \
-    && chown -R jenkins:jenkins /usr/share/jenkins-provisioning \
     && mkdir -p /usr/local/etc/jenkins \
     && chown -R jenkins:jenkins /usr/local/etc/jenkins
 
-RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
+# generate key pair for connections to buildagents
+RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
+
+ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
+ONBUILD COPY *.yml /usr/share/jenkins-provisioning/
+
+ONBUILD USER root
+ONBUILD RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     apk --update add sudo                                         && \
     \
     \
@@ -45,27 +53,15 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     echo "===> Adding hosts for convenience..."  && \
     mkdir -p /etc/ansible                        && \
-    echo 'localhost' > /etc/ansible/hosts
-
-USER jenkins
-COPY config-templates/* /usr/share/jenkins/ref/
-COPY *.yml /usr/share/jenkins-provisioning/
-
-ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
-ONBUILD COPY *.yml /usr/share/jenkins-provisioning/
-
-ONBUILD USER root
-
-# TODO: auszuführende(s) Playbook(s) parametrisierbar machen
-ONBUILD RUN echo "===> Configuring Jenkins..." && \
-            ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
-            \
-            \
-            echo "===> Removing package list..."  && \
-            apk del build-dependencies            && \
-            rm -rf /var/cache/apk/*
+    echo 'localhost' > /etc/ansible/hosts        && \
+    \
+    \
+    echo "===> Configuring Jenkins..." && \
+    ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
+    \
+    \
+    echo "===> Removing package list..."  && \
+    apk del build-dependencies            && \
+    rm -rf /var/cache/apk/*
 
 ONBUILD USER jenkins
-
-# generate key pair for connections to buildagents
-RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
