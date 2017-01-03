@@ -21,7 +21,7 @@ credentials:
 
 docker_cloud_configuration:
   - <com.nirima.jenkins.plugins.docker.DockerCloud>
-      <name>local-machbook-dockerhost</name>
+      <name>{{ dockerhost_name }}</name>
       <templates>
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
