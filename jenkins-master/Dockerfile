@@ -54,6 +54,8 @@ COPY *.yml /usr/share/jenkins-provisioning/
 ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
 ONBUILD COPY *.yml /usr/share/jenkins-provisioning/
 
+ONBUILD USER root
+
 # TODO: auszuführende(s) Playbook(s) parametrisierbar machen
 ONBUILD RUN echo "===> Configuring Jenkins..." && \
             ansible-playbook --connection=local /usr/share/jenkins-provisioning/configure-jenkins.yml && \
@@ -63,7 +65,7 @@ ONBUILD RUN echo "===> Configuring Jenkins..." && \
             apk del build-dependencies            && \
             rm -rf /var/cache/apk/*
 
+ONBUILD USER jenkins
+
 # generate key pair for connections to buildagents
 RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
-
-CMD ["java", "-jar", "/usr/share/jenkins/jenkins.war", "--version"]
