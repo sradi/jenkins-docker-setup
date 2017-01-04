@@ -1,2 +1,11 @@
 ---
-dockerhost_name: localhostMacbook
+dockerhost:
+  name: localhostMacbook
+  serverUrl: tcp://192.168.99.100:2376
+  connectTimeout: 5
+  readTimeout: 15
+  # total maximum of containers on this docker host (not only containers created by jenkins)
+  containerCap: 50
+  template:
+    image: jenkinsci/docker-ssh-slave
+    remoteFsRoot: /home/jenkins

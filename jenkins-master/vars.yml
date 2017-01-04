@@ -3,8 +3,8 @@ credentials:
   - <java.util.concurrent.CopyOnWriteArrayList>
       <com.nirima.jenkins.plugins.docker.utils.DockerDirectoryCredentials>
         <scope>SYSTEM</scope>
-        <id>e650d4f8-a5f1-4d61-ae52-6da893f55073</id>
-        <description>Certs for accessing local-macbook-dockerhost</description>
+        <id>certs-for-dockerhost</id>
+        <description>certs for dockerhost</description>
         <path>/Users/sradi/.docker/machine/certs</path>
       </com.nirima.jenkins.plugins.docker.utils.DockerDirectoryCredentials>
       <com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey plugin="ssh-credentials@1.12">
@@ -21,7 +21,7 @@ credentials:
 
 docker_cloud_configuration:
   - <com.nirima.jenkins.plugins.docker.DockerCloud>
-      <name>{{ dockerhost_name }}</name>
+      <name>{{ dockerhost["name"] }}</name>
       <templates>
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
@@ -36,8 +36,8 @@ docker_cloud_configuration:
               <retryWaitTime>0</retryWaitTime>
             </sshConnector>
           </launcher>
-          <remoteFsMapping>/Users/sradi/.jenkins</remoteFsMapping>
-          <remoteFs>/home/jenkins</remoteFs>
+          <remoteFsMapping>/var/jenkins_home/</remoteFsMapping>
+          <remoteFs>{{ dockerhost["template"]["remoteFsRoot"] }}</remoteFs>
           <instanceCap>5</instanceCap>
           <mode>EXCLUSIVE</mode>
           <retentionStrategy class="com.nirima.jenkins.plugins.docker.strategy.DockerOnceRetentionStrategy">
@@ -46,7 +46,7 @@ docker_cloud_configuration:
           </retentionStrategy>
           <numExecutors>1</numExecutors>
           <dockerTemplateBase>
-            <image>jenkinsci/docker-ssh-slave</image>
+            <image>{{ dockerhost["template"]["image"] }}</image>
             <dockerCommand></dockerCommand>
             <lxcConfString></lxcConfString>
             <hostname></hostname>
@@ -68,10 +68,10 @@ docker_cloud_configuration:
           <pullStrategy>PULL_LATEST</pullStrategy>
         </com.nirima.jenkins.plugins.docker.DockerTemplate>
       </templates>
-      <serverUrl>tcp://192.168.99.100:2376</serverUrl>
-      <connectTimeout>5</connectTimeout>
-      <readTimeout>15</readTimeout>
+      <serverUrl>{{ dockerhost["serverUrl"] }}</serverUrl>
+      <connectTimeout>{{ dockerhost["connectTimeout"] }}</connectTimeout>
+      <readTimeout>{{  dockerhost["readTimeout"] }}</readTimeout>
       <version></version>
-      <credentialsId>e650d4f8-a5f1-4d61-ae52-6da893f55073</credentialsId>
-      <containerCap>10</containerCap>
+      <credentialsId>certs-for-dockerhost</credentialsId>
+      <containerCap>{{ dockerhost["containerCap"] }}</containerCap>
     </com.nirima.jenkins.plugins.docker.DockerCloud>
