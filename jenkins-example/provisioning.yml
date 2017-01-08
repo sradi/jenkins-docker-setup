@@ -6,6 +6,9 @@ dockerhost:
   readTimeout: 15
   # total maximum of containers on this docker host (not only containers created by jenkins)
   containerCap: 50
+  # TODO: User env variable DOCKER_HOST_CERTS_PATH here
+  credentialsPath: /usr/local/etc/jenkins/certs/
   template:
-    image: jenkinsci/docker-ssh-slave
+    image: jenkinsci/ssh-slave
     remoteFsRoot: /home/jenkins
+    label: default-agent

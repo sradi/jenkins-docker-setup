@@ -5,12 +5,12 @@ credentials:
         <scope>SYSTEM</scope>
         <id>certs-for-dockerhost</id>
         <description>certs for dockerhost</description>
-        <path>/Users/sradi/.docker/machine/certs</path>
+        <path>{{ dockerhost["credentialsPath"] }}</path>
       </com.nirima.jenkins.plugins.docker.utils.DockerDirectoryCredentials>
       <com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey plugin="ssh-credentials@1.12">
         <scope>SYSTEM</scope>
-        <id>default-agent-key</id>
-        <description>SSH key for connections to Jenkins default buildagent</description>
+        <id>buildagent-key</id>
+        <description>SSH key for connections to Jenkins buildagent</description>
         <username></username>
         <passphrase>iDaU+tMy9onQdCrt8tacgQ==</passphrase>
         <privateKeySource class="com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$FileOnMasterPrivateKeySource">
@@ -25,11 +25,11 @@ docker_cloud_configuration:
       <templates>
         <com.nirima.jenkins.plugins.docker.DockerTemplate>
           <configVersion>2</configVersion>
-          <labelString>default-agent</labelString>
+          <labelString>{{ dockerhost["template"]["label"] }}</labelString>
           <launcher class="com.nirima.jenkins.plugins.docker.launcher.DockerComputerSSHLauncher">
             <sshConnector>
               <port>22</port>
-              <credentialsId>default-agent-key</credentialsId>
+              <credentialsId>buildagent-key</credentialsId>
               <jvmOptions></jvmOptions>
               <javaPath></javaPath>
               <maxNumRetries>0</maxNumRetries>
