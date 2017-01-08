@@ -9,6 +9,9 @@ dockerhost:
   # TODO: User env variable DOCKER_HOST_CERTS_PATH here
   credentialsPath: /usr/local/etc/jenkins/certs/
   template:
+    slaveUsername: jenkins
+    slavePrivateKeyFile: "{{ ansible_env.SSH_SLAVE_PRIVATE_KEY_FILE }}"
     image: jenkinsci/ssh-slave
     remoteFsRoot: /home/jenkins
     label: default-agent
+    environment: JENKINS_SLAVE_SSH_PUBKEY={{ lookup('file', ansible_env.SSH_SLAVE_PUBLIC_KEY_FILE) }}

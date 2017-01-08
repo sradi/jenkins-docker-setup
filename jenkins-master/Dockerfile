@@ -27,7 +27,9 @@ RUN mkdir /var/log/jenkins \
     && chown -R jenkins:jenkins /usr/local/etc/jenkins
 
 # generate key pair for connections to buildagents
-RUN ssh-keygen -t rsa -b 2048 -q -N "" -f /var/keys/jenkins/.ssh/id_rsa
+ENV SSH_SLAVE_PRIVATE_KEY_FILE /var/keys/jenkins/.ssh/id_rsa
+ENV SSH_SLAVE_PUBLIC_KEY_FILE /var/keys/jenkins/.ssh/id_rsa.pub
+RUN ssh-keygen -t rsa -b 2048 -q -N "" -f ${SSH_SLAVE_PRIVATE_KEY_FILE}
 
 ONBUILD COPY config-templates/* /usr/share/jenkins/ref/
 ONBUILD COPY *.yml /usr/share/jenkins-provisioning/

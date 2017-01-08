@@ -11,10 +11,10 @@ credentials:
         <scope>SYSTEM</scope>
         <id>buildagent-key</id>
         <description>SSH key for connections to Jenkins buildagent</description>
-        <username></username>
+        <username>{{ dockerhost["template"]["slaveUsername"] }}</username>
         <passphrase>iDaU+tMy9onQdCrt8tacgQ==</passphrase>
         <privateKeySource class="com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$FileOnMasterPrivateKeySource">
-          <privateKeyFile>/Users/sradi/.ssh/id_rsa</privateKeyFile>
+          <privateKeyFile>{{ dockerhost["template"]["slavePrivateKeyFile"] }}</privateKeyFile>
         </privateKeySource>
       </com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey>
     </java.util.concurrent.CopyOnWriteArrayList>
@@ -54,7 +54,9 @@ docker_cloud_configuration:
             <network></network>
             <volumes/>
             <volumesFrom2/>
-            <environment/>
+            <environment>
+              <string>{{ dockerhost["template"]["environment"] }}</string>
+            </environment>
             <bindPorts></bindPorts>
             <bindAllPorts>false</bindAllPorts>
             <privileged>false</privileged>
