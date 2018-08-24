@@ -3,7 +3,7 @@ FROM sradi/jenkins-master
 MAINTAINER Stefan Rademacher <s.rademacher@live.de>
 
 USER jenkins
-RUN /usr/local/bin/install-plugins.sh blueocean
+RUN /usr/local/bin/install-plugins.sh blueocean ssh-agent
 
 # Copy in the certs for connection to Docker host
 COPY certs-from-docker-host/* ${DOCKER_HOST_CERTS_PATH}

@@ -8,9 +8,10 @@ RUN addgroup -g 1000 jenkins \
 # Add the jenkins user to sudoers
 RUN echo "jenkins  ALL=(ALL)  ALL" >> etc/sudoers
 
-RUN apk add --no-cache bash openssh \
-	&& sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
-	&& mkdir /var/run/sshd
+RUN apk add --no-cache bash git git-subtree openssh \
+	&& mkdir /var/run/sshd \
+	&& sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+
 
 # setup host keys !?! (https://bbs.archlinux.org/viewtopic.php?id=165382)
 RUN /usr/bin/ssh-keygen -A
